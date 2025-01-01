@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="styles.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9ecef;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #007bff;
+            text-align: center;
+        }
+        
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            flex: 1 1 45%;
+            /* Adjust width of each form group */
+            min-width: 300px;
+            /* Minimum width to ensure responsiveness */
+        }
+        
+        label {
+            width: 150px;
+            /* Fixed width for labels */
+            margin-right: 10px;
+            color: #495057;
+        }
+        
+        input,
+        select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1 1 100%;
+            /* Full width button */
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        #error {
+            color: red;
+            flex-basis: 100%;
+            /* Full width for error message */
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="notification" class="notification"></div>
+    <h1>LET'S GO! Sign Up</h1>
+    <form id="signupForm">
+        <!-- existing form fields -->
+    </form>
+    <h1>Register</h1>
+    <form id="registrationForm">
+        <div id="error"></div>
+
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required />
+        </div>
+
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <input type="number" id="age" required />
+        </div>
+
+        <div class="form-group">
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" required />
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required />
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" required />
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location:</label>
+            <input type="text" id="location" required />
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" required />
+        </div>
+
+        <div class="form-group">
+            <label for="user_type">User Type:</label>
+            <select id="user_type" required>
+                <option value="">Select...</option>
+                <option value="rider">Rider</option>
+                <option value="driver">Driver</option>
+            </select>
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', async(e) => {
+            e.preventDefault();
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = ''; // Clear previous errors
+
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const dob = document.getElementById('dob').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const location = document.getElementById('location').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const user_type = document.getElementById('user_type').value;
+
+            if (!name || !age || !dob || !email || !phone || !location || !username || !password || !user_type) {
+                displayError('All fields are required.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name,
+                        age,
+                        dob,
+                        email,
+                        phone,
+                        location,
+                        username,
+                        password,
+                        user_type
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.errors ? data.errors.map(e => e.msg).join(', ') : 'Registration failed');
+                }
+                alert('Registration successful!');
+            } catch (error) {
+                displayError(error.message);
+            }
+        });
+
+        function displayError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
