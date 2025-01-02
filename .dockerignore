@@ -1,0 +1,14 @@
+# Build Stage
+FROM node:12 AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build  # Assuming you have a build script
+
+# Production Stage
+FROM node:12
+WORKDIR /app
+COPY --from=build /app/dist ./dist  # Adjust to the output directory
+EXPOSE 3000
+CMD ["npm", "start"]
